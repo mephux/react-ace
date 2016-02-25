@@ -10,6 +10,7 @@ export default class ReactAce extends Component {
       'onBlur',
       'onCopy',
       'onPaste',
+      'handleOptions',
     ]
     .forEach(method => {
       this[method] = this[method].bind(this);
@@ -65,6 +66,7 @@ export default class ReactAce extends Component {
     this.editor.on('copy', this.onCopy);
     this.editor.on('paste', this.onPaste);
     this.editor.on('change', this.onChange);
+    this.handleOptions(this.props);
 
     if (keyboardHandler) {
       this.editor.setKeyboardHandler('ace/keyboard/' + keyboardHandler);
@@ -110,6 +112,9 @@ export default class ReactAce extends Component {
     if (nextProps.showGutter !== oldProps.showGutter) {
       this.editor.renderer.setShowGutter(nextProps.showGutter);
     }
+    if (nextProps.setOptions !== oldProps.setOptions) {
+      this.handleOptions(nextProps);
+    }
     if (this.editor.getValue() !== nextProps.value) {
       // editor.setValue is a synchronous function call, change event is emitted before setValue return.
       this.silent = true;
@@ -153,6 +158,13 @@ export default class ReactAce extends Component {
     }
   }
 
+  handleOptions(props) {
+    const setOptions = Object.keys(props.setOptions);
+    for (let y = 0; y < setOptions.length; y++) {
+      this.editor.setOption(setOptions[y], props.setOptions[setOptions[y]]);
+    }
+  }
+
   render() {
     const { name, className, width, height } = this.props;
     const divStyle = { width, height };
@@ -192,6 +204,7 @@ ReactAce.propTypes = {
   showPrintMargin: PropTypes.bool,
   cursorStart: PropTypes.number,
   editorProps: PropTypes.object,
+  setOptions: PropTypes.object,
   keyboardHandler: PropTypes.string,
   wrapEnabled: PropTypes.bool,
 };
@@ -216,5 +229,6 @@ ReactAce.defaultProps = {
   tabSize: 4,
   cursorStart: 1,
   editorProps: {},
+  setOptions: {},
   wrapEnabled: false,
 };

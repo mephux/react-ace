@@ -122,7 +122,10 @@ export default class ReactAce extends Component {
   }
 
   componentWillUnmount() {
-    this.editor.getSession().$worker.terminate();
+    var worker = this.editor.getSession().$worker;
+    if (worker) {
+     worker.terminate(); 
+    }
     this.editor = null;
   }
 
